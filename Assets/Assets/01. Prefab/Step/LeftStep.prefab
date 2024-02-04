@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cce5d4531129f14c9b479c2c9297930, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stepType: 0
   ren: {fileID: 6437861431743905306}
   spotLight: {fileID: 3814228698734944953}
   showSpeed: 1

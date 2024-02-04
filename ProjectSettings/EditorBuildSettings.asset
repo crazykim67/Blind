@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Assets/08. Scenes/Scene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/Assets/08. Scenes/EnemyScene.unity
+    guid: fd7a6bc8bc044614aadc050d80a1856e
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

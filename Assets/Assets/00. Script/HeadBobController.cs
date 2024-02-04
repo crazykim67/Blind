@@ -69,16 +69,14 @@ public class HeadBobController : MonoBehaviour
         camTr.localPosition += motion;
 
         if(Mathf.Abs(camTr.localPosition.x - startPos.x) < tolerance)
-        {
             stepController.OnStep();
-            Debug.Log("Step");
-        }
     }
 
     // 플레이어의 움직임을 확인하고, 일정 속도 이상일 때만 헤드 밥 효과를 적용하는 메서드
     public void CheckMotion()
     {
         float speed = new Vector3(controller.moveDir.x, 0, controller.moveDir.z).magnitude;
+
         if (speed < toggleSpeed)
             return;
 

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -36,6 +36,7 @@ public class PlayerController : MonoBehaviour
         if (ch.isGrounded)
             velocity.y = 0f;
 
+        // 점프
         //if(Input.GetKeyDown(KeyCode.Space) && ch.isGrounded)
         //    velocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravity);
 

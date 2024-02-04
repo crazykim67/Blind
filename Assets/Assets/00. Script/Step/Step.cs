@@ -2,8 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum StepType
+{
+    Player,
+    Enemy,
+}
+
 public abstract class Step : MonoBehaviour
 {
+    public StepType stepType;
+
     public SpriteRenderer ren;
     public Light spotLight;
 

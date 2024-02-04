@@ -1,7 +1,7 @@
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Pool;
 
 public class StepPoolManager : MonoBehaviour
 {
@@ -30,13 +30,20 @@ public class StepPoolManager : MonoBehaviour
     [SerializeField]
     private GameObject rightStep;
 
+    [Header("Player")]
     [SerializeField]
     private Transform playerTr;
-
     private Queue<Step> stepQueue = new Queue<Step>();
-
-    [SerializeField]
     private int stepIndex = 0;
+
+    [Header("Enemy")]
+    [SerializeField]
+    private List<DummyEnemy> enemies = new List<DummyEnemy>();
+    [SerializeField]
+    private Transform enemyTr;
+
+    private Queue<LeftStep> enemyLeftStepQueue = new Queue<LeftStep>();
+    private Queue<RightStep> enemRightStepQueue = new Queue<RightStep>();
 
     private void Awake()
     {
@@ -49,8 +56,11 @@ public class StepPoolManager : MonoBehaviour
             Destroy(this.gameObject);
 
         Initialize(10);
+        EnemyInitialize(10 * enemies.Count);
         playerTr = FindFirstObjectByType<PlayerController>().GetComponent<Transform>();
     }
+
+    #region Player
 
     private void Initialize(int initCount)
     {
@@ -72,6 +82,8 @@ public class StepPoolManager : MonoBehaviour
             step = Instantiate(rightStep).GetComponent<Step>();
             stepIndex = 0;
         }
+
+        step.stepType = StepType.Player;
 
         step.StepDisable();
         step.transform.SetParent(this.transform);
@@ -117,4 +129,129 @@ public class StepPoolManager : MonoBehaviour
         step.transform.SetParent(this.transform);
         stepQueue.Enqueue(step);
     }
+
+    #endregion
+
+    #region Enemy
+
+    private void EnemyInitialize(int initCount)
+    {
+        for(int i = 0; i < initCount / 2; i++)
+            enemyLeftStepQueue.Enqueue(CreateEnemyLeftStep());
+
+        for (int i = 0; i < initCount / 2; i++)
+            enemRightStepQueue.Enqueue(CreateEnemyRightStep());
+    }
+
+    private LeftStep CreateEnemyLeftStep()
+    {
+        LeftStep step = null;
+
+        step = Instantiate(leftStep).GetComponent<LeftStep>();
+
+        step.stepType = StepType.Enemy;
+        step.StepDisable();
+        step.transform.SetParent(this.enemyTr);
+
+        return step;
+    }
+
+    private RightStep CreateEnemyRightStep()
+    {
+        RightStep step = null;
+
+        step = Instantiate(rightStep).GetComponent<RightStep>();
+
+        step.stepType = StepType.Enemy;
+        step.StepDisable();
+        step.transform.SetParent(this.enemyTr);
+
+        return step;
+    }
+
+    public LeftStep GetEnemyLeftStep(Transform tr)
+    {
+        Vector3 pos = tr.position;
+        Quaternion rot = tr.rotation;
+
+        LeftStep step = null;
+
+        if (enemyLeftStepQueue.Count > 0)
+        {
+            LeftStep leftStep = enemyLeftStepQueue.Dequeue();
+            leftStep.transform.SetParent(null);
+            leftStep.transform.position = new Vector3(pos.x, 0, pos.z);
+            leftStep.transform.rotation = rot;
+
+            leftStep.gameObject.SetActive(true);
+            leftStep.OnStep();
+
+            step = leftStep;
+        }
+        else
+        {
+            var newStep = CreateEnemyLeftStep();
+
+            newStep.gameObject.SetActive(true);
+            newStep.transform.SetParent(null);
+            newStep.transform.position = new Vector3(pos.x, 0, pos.z);
+            newStep.transform.rotation = rot;
+
+            newStep.OnStep();
+
+            step = newStep;
+        }
+
+        return step;
+    }
+
+    public RightStep GetEnemyRightStep(Transform tr)
+    {
+        Vector3 pos = tr.position;
+        Quaternion rot = tr.rotation;
+
+        RightStep step = null;
+
+        if (enemRightStepQueue.Count > 0)
+        {
+            RightStep leftStep = enemRightStepQueue.Dequeue();
+            leftStep.transform.SetParent(null);
+            leftStep.transform.position = new Vector3(pos.x, 0, pos.z);
+            leftStep.transform.rotation = rot;
+
+            leftStep.gameObject.SetActive(true);
+            leftStep.OnStep();
+
+            step = leftStep;
+        }
+        else
+        {
+            var newStep = CreateEnemyRightStep();
+
+            newStep.gameObject.SetActive(true);
+            newStep.transform.SetParent(null);
+            newStep.transform.position = new Vector3(pos.x, 0, pos.z);
+            newStep.transform.rotation = rot;
+
+            newStep.OnStep();
+
+            step = newStep;
+        }
+
+        return step;
+    }
+
+    public void ReturnEnemyLeftStep(LeftStep step)
+    {
+        step.transform.SetParent(this.enemyTr);
+        enemyLeftStepQueue.Enqueue(step);
+    }
+
+    public void ReturnEnemyRightStep(RightStep step)
+    {
+        step.transform.SetParent(this.enemyTr);
+        enemRightStepQueue.Enqueue(step);
+    }
+
+    #endregion
 }

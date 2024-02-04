@@ -58,7 +58,11 @@ public class LeftStep : Step
         }
 
         StepDisable();
-        StepPoolManager.Instance.ReturnStep(this);
+
+        if (stepType == StepType.Player)
+            StepPoolManager.Instance.ReturnStep(this);
+        else
+            StepPoolManager.Instance.ReturnEnemyLeftStep(this);
     }
 
     public override void StepDisable()
